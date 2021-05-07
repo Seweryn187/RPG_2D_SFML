@@ -1,0 +1,2 @@
+E:\Uczelnia\Informatyka_VI_semestr\ProjektGrafikaKomputerowa\x64\Debug\ProjektGrafikaKomputerowa.exe
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie do komunikacji człowiek-komputer\Laboratorium\Interfejs\ProjektGrafikaKomputerowa\x64\Debug\ProjektGrafikaKomputerowa.exe
