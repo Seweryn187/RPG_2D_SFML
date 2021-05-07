@@ -1,0 +1,80 @@
+﻿  Enemy.cpp
+  Engine.cpp
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(17,24): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(406,24): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(406,21): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(413,40): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(413,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(441,47): warning C4305: 'argument': truncation from 'double' to 'float'
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(460,21): warning C4018: '<': signed/unsigned mismatch
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(461,22): warning C4018: '<': signed/unsigned mismatch
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(490,21): warning C4018: '<': signed/unsigned mismatch
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(491,22): warning C4018: '<': signed/unsigned mismatch
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(505,21): warning C4018: '<': signed/unsigned mismatch
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(506,22): warning C4018: '<': signed/unsigned mismatch
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(998,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(998,24): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1013,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1013,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1036,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1036,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1074,36): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1074,28): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1075,34): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1075,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1076,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1076,38): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1077,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1077,23): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1078,24): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1078,18): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1079,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1079,21): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1080,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1080,20): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1131,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1131,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1132,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1132,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1133,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1133,38): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1134,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1134,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1135,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1135,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1136,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1136,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1137,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1137,22): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1167,28): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1167,25): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1235,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1235,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1255,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1255,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1256,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1256,36): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1257,28): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1257,25): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1264,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1264,26): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1269,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1269,29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1274,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1274,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1295,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1295,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1296,35): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1296,27): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1378,15): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\Engine.cpp(1379,15): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+  Field.cpp
+  Map.cpp
+  Npc.cpp
+  Player.cpp
+  Main.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 250 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  ProjektGrafikaKomputerowa.vcxproj -> E:\Uczelnia\Informatyka V semestr\Grafika komputerowa\Proj\ProjektGrafikaKomputerowa\x64\Release\ProjektGrafikaKomputerowa.exe

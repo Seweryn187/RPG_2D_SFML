@@ -72,7 +72,7 @@ public:
 	void prepare_textures();
 	void make_dialogue(std::string greeting, std::string basic_replay, std::string farewell,
 		std::string dialogue_opt_1, std::string dialogue_opt_2, std::string dialogue_opt_3, std::string answer1,
-		std::string answer2, std::string answer3);
+		std::string answer2, std::string answer3, std::string first_contact, std::string after_quest);
 
 	//Blok interakcji
 	void fight_handler();
@@ -101,7 +101,7 @@ public:
 	void draw_background();
 	void draw_game_over_background();
 	void draw_player_statistics(int i, int j);
-	void draw_controls(int i, int j);
+	void draw_help(int i, int j);
 	void draw_enemy_statistics(int i, int j, Enemy enemy);
 	void draw_player(int i, int j);
 	void draw_player_big(int i, int j);

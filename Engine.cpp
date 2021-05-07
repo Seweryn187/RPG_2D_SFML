@@ -10,6 +10,8 @@ bool first_contact = true;
 bool player_turn = false;
 bool after_fight = false;
 bool game_continue = false;
+bool show_help_window = false;
+bool english_language = true;
 unsigned SIZE = 30;
 int direction = 0;
 const int SCREEN_WIDTH = 1920;
@@ -19,7 +21,7 @@ const float invScale = 1 / scale;
 const int NUMBER_OF_ENEMYS = 3;
 
 Map map(SIZE);
-Npc npc1 = Npc(24, 4, "Innkeeper", 1);
+Npc npc1 = Npc(24, 5, "Innkeeper", 1);
 Enemy array_of_enemys[NUMBER_OF_ENEMYS];
 Player player = Player(10, 1, 10, 20);
 sf::Color grey(0x808080ff);
@@ -47,8 +49,16 @@ void Engine::game_mode()
 void Engine::run()
 {
 	map.create();
-	make_dialogue("Hi", "", "Goodbye.", "Give me beer", "Do you want some help?", "I will do it", 
-		"Ok, here you are.", "Yes, I have problem with rats in the basement.", "Good luck, take my old sword.");
+	if (english_language) {
+		make_dialogue("Hi", "", "Goodbye.", "Give me beer", "Do you want some help?", "I will do it",
+			"Ok, here you are.", "Yes, I have problem with rats in the basement.", "Good luck, take my old sword.",
+			"Welcome stranger.", "You got rid of the rats in the basement!");
+	}
+	else {
+		make_dialogue("Witaj", "", "Zegnaj.", "Daj mi piwo", "Potrzebujesz pomocy?", "Zrobie to",
+			"Ok, prosze bardzo.", "Tak, mam problem z szczurami w piwnicy.", "Zycze powodzenia, wez moj stary miecz.",
+			"Witaj nieznajomy.", "Uda³o Ci siê pozbyæ szczurów z piwnicy!");
+	}
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			npc1.set_dialogue(tab_npc[i][j], i, j);
@@ -208,20 +218,32 @@ void Engine::handle_events()
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Escape) && (game_state >= 0)) {
 			change_level(200);
 		}
-		if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::A) && (is_talking == false)) {
+		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::A) 
+			|| (event.key.code == sf::Keyboard::Left)) && (is_talking == false)) {
 			movement(0);
 		}
-		if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::W) && (is_talking == false)) {
+		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::W) 
+			|| (event.key.code == sf::Keyboard::Up)) && (is_talking == false)) {
 			movement(1);
 		}
-		if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::S) && (is_talking == false)) {
+		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::S) 
+			|| (event.key.code == sf::Keyboard::Down)) && (is_talking == false)) {
 			movement(2);
 		}
-		if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::D) && (is_talking == false)) {
+		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::D) 
+			|| (event.key.code == sf::Keyboard::Right)) && (is_talking == false)) {
 			movement(3);
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Space)) {
 			player_action();
+		}
+		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::H)) {
+			if (show_help_window == false) {
+				show_help_window = true;
+			}
+			else {
+				show_help_window = false;
+			}
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Q)) {
 			is_talking = false;
@@ -267,9 +289,17 @@ void Engine::handle_events()
 				change_level(0);
 				break;
 			case 1:
-				change_level(201);
+				if (english_language == true) {
+					english_language = false;
+				}
+				else {
+					english_language = true;
+				}
 				break;
 			case 2:
+				change_level(201);
+				break;
+			case 3:
 				window->close();
 				break;
 			}
@@ -356,21 +386,63 @@ void Engine::print_menu() {
 	switch (which_button) {
 	case 0:
 		print_title();
-		print_button("START", 800, 250, 10, true);
-		print_button("CREDITS", 800, 450, -15, false);
-		print_button("EXIT", 800, 650, 30, false);
+		if (english_language == true) {
+			print_button("START", 750, 250, 80, true);
+			print_button("LANGUAGE:EN", 750, 450, -35, false);
+			print_button("CREDITS", 750, 650, 40, false);
+			print_button("EXIT", 750, 850, 95, false);
+		}
+		else {
+			print_button("START", 700, 250, 120, true);
+			print_button("JEZYK:PL", 700, 450, 85, false);
+			print_button("NAPISY KONCOWE", 700, 650, -30, false);
+			print_button("WYJSCIE", 700, 850, 90, false);
+		}
 		break;
 	case 1:
 		print_title();
-		print_button("START", 800, 250, 10, false);
-		print_button("CREDITS", 800, 450, -15, true);
-		print_button("EXIT", 800, 650, 30, false);
+		if (english_language == true) {
+			print_button("START", 750, 250, 80, false);
+			print_button("LANGUAGE:EN", 750, 450, -35, true);
+			print_button("CREDITS", 750, 650, 40, false);
+			print_button("EXIT", 750, 850, 95, false);
+		}
+		else {
+			print_button("START", 700, 250, 120, false);
+			print_button("JEZYK:PL", 700, 450, 85, true);
+			print_button("NAPISY KONCOWE", 700, 650, -30, false);
+			print_button("WYJSCIE", 700, 850, 90, false);
+		}
 		break;
 	case 2:
 		print_title();
-		print_button("START", 800, 250, 10, false);
-		print_button("CREDITS", 800, 450, -15, false);
-		print_button("EXIT", 800, 650, 30, true);
+		if (english_language == true) {
+			print_button("START", 750, 250, 80, false);
+			print_button("LANGUAGE:EN", 750, 450, -35, false);
+			print_button("CREDITS", 750, 650, 40, true);
+			print_button("EXIT", 750, 850, 95, false);
+		}
+		else {
+			print_button("START", 700, 250, 120, false);
+			print_button("JEZYK:PL", 700, 450, 85, false);
+			print_button("NAPISY KONCOWE", 700, 650, -30, true);
+			print_button("WYJSCIE", 700, 850, 90, false);
+		}
+		break;
+	case 3:
+		print_title();
+		if (english_language == true) {
+			print_button("START", 750, 250, 80, false);
+			print_button("LANGUAGE:EN", 750, 450, -35, false);
+			print_button("CREDITS", 750, 650, 40, false);
+			print_button("EXIT", 750, 850, 95, true);
+		}
+		else {
+			print_button("START", 700, 250, 120, false);
+			print_button("JEZYK:PL", 700, 450, 85, false);
+			print_button("NAPISY KONCOWE", 700, 650, -30, false);
+			print_button("WYJSCIE", 700, 850, 90, true);
+		}
 		break;
 	}
 }
@@ -382,8 +454,14 @@ void Engine::print_title() {
 	title.setOutlineThickness(5);
 	title.setFillColor(sf::Color::White);
 	title.setStyle(sf::Text::Bold);
-	title.setPosition(500, 50);
-	title.setString("Inns and rats: Roleplaying game");
+	if (english_language) {
+		title.setPosition(500, 50);
+		title.setString("Inns and rats: Roleplaying game");
+	}
+	else {
+		title.setPosition(550, 50);
+		title.setString("Tawerny i szczury: gra RPG");
+	}
 	window->draw(title);
 }
 
@@ -397,7 +475,12 @@ void Engine::print_button(std::string name, int i, int j, int offset, bool butto
 		button.setOutlineColor(sf::Color::Black);
 	}
 	button.setOutlineThickness(5);
-	button.setSize(sf::Vector2f(280,100));
+	if (english_language) {
+		button.setSize(sf::Vector2f(400, 100));
+	}
+	else {
+		button.setSize(sf::Vector2f(500, 100));
+	}
 	button.setPosition(i, j);
 	button_name.setFont(font);
 	button_name.setCharacterSize(50);
@@ -415,15 +498,70 @@ void Engine::print_credits() {
 	credits_view.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	credits_view.setCenter(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 	credits_view.setViewport(sf::FloatRect(0, (1 - scale) / 2, scale, scale));
+
 	sf::Text titleCredit("Credits", font, SCREEN_HEIGHT / 12);
+	if (!english_language) {
+		titleCredit.setString("Napisy Koncowe");
+	}
 	titleCredit.setPosition((SCREEN_WIDTH - titleCredit.getGlobalBounds().width) / 2, 0);
 	titleCredit.setFillColor(sf::Color::White);
+
 	sf::Text creditText("Creators and Lead Developers:", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText.setString("Tworcy i glowni programisci");
+	}
 	creditText.setPosition((SCREEN_WIDTH * invScale - creditText.getGlobalBounds().width) / 2, SCREEN_HEIGHT);
 	creditText.setFillColor(sf::Color::White);
+
 	sf::Text creditText2("Seweryn Cholewa and Dariusz Stefanski", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText2.setString("Seweryn Cholewa i Dariusz Stefanski");
+	}
 	creditText2.setPosition((SCREEN_WIDTH * invScale - creditText2.getGlobalBounds().width) / 2, creditText.getGlobalBounds().top + creditText.getGlobalBounds().height);
 	creditText2.setFillColor(sf::Color::Red);
+
+	sf::Text creditText3("Graphic Designers:", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText3.setString("Graficy:");
+	}
+	creditText3.setPosition((SCREEN_WIDTH * invScale - creditText3.getGlobalBounds().width) / 2, creditText2.getGlobalBounds().top + creditText2.getGlobalBounds().height);
+	creditText3.setFillColor(sf::Color::White);
+
+	sf::Text creditText4("Seweryn Cholewa and Dariusz Stefanski", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText4.setString("Seweryn Cholewa i Dariusz Stefanski");
+	}
+	creditText4.setPosition((SCREEN_WIDTH * invScale - creditText4.getGlobalBounds().width) / 2, creditText3.getGlobalBounds().top + creditText3.getGlobalBounds().height);
+	creditText4.setFillColor(sf::Color::Red);
+
+	sf::Text creditText5("Story Writers:", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText5.setString("Tworcy fabuly:");
+	}
+	creditText5.setPosition((SCREEN_WIDTH * invScale - creditText5.getGlobalBounds().width) / 2, creditText4.getGlobalBounds().top + creditText4.getGlobalBounds().height);
+	creditText5.setFillColor(sf::Color::White);
+
+	sf::Text creditText6("Seweryn Cholewa and Dariusz Stefanski", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText6.setString("Seweryn Cholewa i Dariusz Stefanski");
+	}
+	creditText6.setPosition((SCREEN_WIDTH * invScale - creditText6.getGlobalBounds().width) / 2, creditText5.getGlobalBounds().top + creditText5.getGlobalBounds().height);
+	creditText6.setFillColor(sf::Color::Red);
+
+	sf::Text creditText7("Special thanks to :", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText7.setString("Specjalne podziekowania dla:");
+	}
+	creditText7.setPosition((SCREEN_WIDTH * invScale - creditText7.getGlobalBounds().width) / 2, creditText6.getGlobalBounds().top + creditText6.getGlobalBounds().height);
+	creditText7.setFillColor(sf::Color::White);
+
+	sf::Text creditText8("Seweryn Cholewa and Dariusz Stefanski", font, SCREEN_WIDTH / 24);
+	if (!english_language) {
+		creditText8.setString("Seweryna Cholewy i Dariusza Stefanskiego");
+	}
+	creditText8.setPosition((SCREEN_WIDTH * invScale - creditText8.getGlobalBounds().width) / 2, creditText7.getGlobalBounds().top + creditText7.getGlobalBounds().height);
+	creditText8.setFillColor(sf::Color::Red);
+
 	bool quit = false;
 	while (window->isOpen() && !quit) {
 		sf::Event event;
@@ -441,6 +579,12 @@ void Engine::print_credits() {
 			window->setView(credits_view);
 			window->draw(creditText);
 			window->draw(creditText2);
+			window->draw(creditText3);
+			window->draw(creditText4);
+			window->draw(creditText5);
+			window->draw(creditText6);
+			window->draw(creditText7);
+			window->draw(creditText8);
 			window->setView(window->getDefaultView());
 			window->draw(titleCredit);
 			handle_events();
@@ -477,6 +621,9 @@ void Engine::set_scene() {
 			y = tab[i][1];
 			map(x, y).set_state(Field::states::SAND);
 		}
+		map(25, 4).set_state(Field::states::DECORATION);
+		map(3, 25).set_state(Field::states::DECORATION);
+		map(10, 20).set_state(Field::states::DECORATION);
 		map(15, 10).set_state(Field::states::DECORATION);
 		map(3, 3).set_state(Field::states::DECORATION);
 		map(20, 25).set_state(Field::states::DECORATION);
@@ -489,9 +636,29 @@ void Engine::set_scene() {
 		}
 		place_npcs();
 		map(5, 10).set_state(Field::states::DECORATION);
+		map(6, 10).set_state(Field::states::DECORATION);
+		map(4, 10).set_state(Field::states::DECORATION);
+		map(5, 9).set_state(Field::states::DECORATION);
+		map(5, 11).set_state(Field::states::DECORATION);
+
 		map(10, 10).set_state(Field::states::DECORATION);
+		map(9, 10).set_state(Field::states::DECORATION);
+		map(11, 10).set_state(Field::states::DECORATION);
+		map(10, 9).set_state(Field::states::DECORATION);
+		map(10, 11).set_state(Field::states::DECORATION);
+
 		map(5, 20).set_state(Field::states::DECORATION);
+		map(4, 20).set_state(Field::states::DECORATION);
+		map(6, 20).set_state(Field::states::DECORATION);
+		map(5, 19).set_state(Field::states::DECORATION);
+		map(5, 21).set_state(Field::states::DECORATION);
+
 		map(10, 20).set_state(Field::states::DECORATION);
+		map(9, 20).set_state(Field::states::DECORATION);
+		map(11, 20).set_state(Field::states::DECORATION);
+		map(10, 19).set_state(Field::states::DECORATION);
+		map(10, 21).set_state(Field::states::DECORATION);
+
 		for (int k = 1; k < 11; k++) {
 			map(23, k).set_state(Field::states::DECORATION);
 		}
@@ -502,9 +669,11 @@ void Engine::set_scene() {
 				map(i, j).set_state(Field::states::SAND);
 			}
 		}
+		map(15, 15).set_state(Field::states::DECORATION);
+		map(5, 25).set_state(Field::states::DECORATION);
 		map(3, 4).set_state(Field::states::DECORATION);
 		map(10, 10).set_state(Field::states::DECORATION);
-		map(20, 15).set_state(Field::states::DECORATION);
+		map(20, 8).set_state(Field::states::DECORATION);
 		map(25, 25).set_state(Field::states::DECORATION);
 		place_enemys();
 		break;
@@ -528,8 +697,7 @@ void Engine::set_doors() {
 
 void Engine::print_map() {
 	draw_background();
-	draw_quest(200, 500);
-	draw_controls(200, 150);
+	draw_quest(200, 150);
 	draw_player_statistics(1500, 150);
 	for (unsigned i = 0; i < SIZE; i++)
 	{
@@ -640,8 +808,11 @@ void Engine::print_map() {
 					draw_wooden_floor(i, j);
 					if (i == 23 && j > 0 && j < 11) {
 					}
-					else {
+					else if ((i == 5 || i == 10) && (j == 10 || j == 20)) {
 						draw_table(i, j);
+					}
+					else {
+						draw_barrel(i,j);
 					}
 					break;
 				case 2:
@@ -651,6 +822,10 @@ void Engine::print_map() {
 				}
 			}
 		}
+	}
+
+	if (show_help_window == true) {
+		draw_help(880, 400);
 	}
 }
 
@@ -705,14 +880,22 @@ void Engine::print_fight_scene() {
 
 
 void Engine::game_over() {
+	show_help_window = false;
 	game_over_t.setFont(font);
 	game_over_t.setCharacterSize(120);
 	game_over_t.setOutlineColor(sf::Color::Black);
 	game_over_t.setOutlineThickness(5);
 	game_over_t.setFillColor(sf::Color::Red);
 	game_over_t.setStyle(sf::Text::Bold);
-	game_over_t.setPosition(500, 250);
-	game_over_t.setString("      Game Over\n      ESC to quit\nEnter to go to menu");
+
+	if(english_language){
+		game_over_t.setPosition(500, 250);
+		game_over_t.setString("      Game Over\n      ESC to quit\nEnter to go to menu");
+	}
+	else {
+		game_over_t.setPosition(150, 250);
+		game_over_t.setString("                Koniec Gry\n     Nacisnij ESC, zeby wyjsc\nNacisnij Enter, zeby kontynuowac");
+	}
 	draw_game_over_background();
 	window->draw(game_over_t);
 }
@@ -817,7 +1000,7 @@ void Engine::prepare_textures() {
 
 void Engine::make_dialogue(std::string greeting, std::string basic_replay, std::string farewell,
 	std::string dialogue_opt_1, std::string dialogue_opt_2, std::string dialogue_opt_3, std::string answer1,
-	std::string answer2, std::string answer3) {
+	std::string answer2, std::string answer3, std::string first_contact, std::string after_quest) {
 	tab_npc = new std::string * [3];
 	for (unsigned i = 0; i < 3; ++i) {
 		tab_npc[i] = new std::string[3];
@@ -831,11 +1014,14 @@ void Engine::make_dialogue(std::string greeting, std::string basic_replay, std::
 	tab_npc[2][0] = answer1;
 	tab_npc[2][1] = answer2;
 	tab_npc[2][2] = answer3;
+	//tab_npc[3][0] = first_contact;
+	//tab_npc[3][1] = after_quest;
 }
 
 //Blok interakcji
 
 void Engine::fight_handler() {
+	show_help_window = false;
 	if(fight_action != 0) {
 		switch (fight_action) {
 		case 0:
@@ -843,23 +1029,58 @@ void Engine::fight_handler() {
 		case 1:
 			if (is_hit(array_of_enemys[which_enemy].get_enemy_dodge_chance())) {
 				array_of_enemys[which_enemy].set_enemy_hit_points(array_of_enemys[which_enemy].get_enemy_hit_points() - player.get_player_weapon_damage());
-				player_fight_log = "Player last action:\nLight attack hit and dealt ";
+				if (english_language) {
+					player_fight_log = "Player last action:\nLight attack hit and dealt ";
+				}
+				else {
+					player_fight_log = "Ostatnia akcja gracza:\nLekki atak uderzyl i zadal  ";
+				}
 				player_fight_log.append(std::to_string(player.get_player_weapon_damage()));
-				player_fight_log.append(" dmg");
+				if (english_language) {
+					player_fight_log.append(" dmg");
+				}
+				else {
+					if (player.get_player_weapon_damage() > 1) {
+						player_fight_log.append(" punkty obrazen");
+					}
+					else {
+						player_fight_log.append(" punkt obrazen");
+					}
+				}
 			}
 			else {
-				player_fight_log = "Player last action:\nLight attack missed";
+				if (english_language) {
+					player_fight_log = "Player last action:\nLight attack missed";
+				}
+				else {
+					player_fight_log = "Ostatnia akcja gracza:\nLekki atak nie trafil";
+				}
 			}
 			break;
 		case 2:
 			if (is_hit(array_of_enemys[which_enemy].get_enemy_dodge_chance() * 2)) {
 				array_of_enemys[which_enemy].set_enemy_hit_points(array_of_enemys[which_enemy].get_enemy_hit_points() - player.get_player_weapon_damage() * 2);
-				player_fight_log = "Player last action:\nHeavy attack hit and dealt ";
+				if (english_language) {
+					player_fight_log = "Player last action:\nHeavy attack hit and dealt ";
+				}
+				else {
+					player_fight_log = "Ostatnia akcja gracza:\nCiezki atak trafil i zadal ";
+				}
 				player_fight_log.append(std::to_string(player.get_player_weapon_damage()*2));
-				player_fight_log.append(" dmg");
+				if (english_language) {
+					player_fight_log.append(" dmg");
+				}
+				else {
+					player_fight_log.append(" punkty obrazen");
+				}
 			}
 			else {
-				player_fight_log = "Player last action:\nHeavy attack missed";
+				if (english_language) {
+					player_fight_log = "Player last action:\nLight attack missed";
+				}
+				else {
+					player_fight_log = "Ostatnia akcja gracza:\nCiezki atak nie trafil";
+				}
 			}
 			break;
 		}
@@ -886,19 +1107,50 @@ void Engine::fight_handler() {
 				int critical = (rand() % 19) + 1;
 				if (critical > 2) {
 					player.set_player_hit_points(player.get_player_hit_points() - array_of_enemys[which_enemy].get_enemy_weapon_damage());
-					enemy_fight_log = "Enemy last action:\nNormal attack hit and dealt ";
+					if (english_language) {
+						enemy_fight_log = "Enemy last action:\nLight attack hit and dealt ";
+					}
+					else {
+						enemy_fight_log = "Ostatnia akcja przeciwnika:\nLekki atak trafil i zadal ";
+					}
 					enemy_fight_log.append(std::to_string(array_of_enemys[which_enemy].get_enemy_weapon_damage()));
-					enemy_fight_log.append(" dmg");
+					if (english_language) {
+						enemy_fight_log.append(" dmg");
+					}
+					else {
+						if (array_of_enemys[which_enemy].get_enemy_weapon_damage() > 1) {
+							enemy_fight_log.append(" punkty obrazen");
+						}
+						else {
+							enemy_fight_log.append(" punkt obrazen");
+						}
+					}
 				}
 				else {
 					player.set_player_hit_points(player.get_player_hit_points() - array_of_enemys[which_enemy].get_enemy_weapon_damage() * 2);
-					enemy_fight_log = "Enemy last action:\nCRITICAL attack hit and dealt ";
+					if (english_language) {
+						enemy_fight_log = "Enemy last action:\nCRITICAL attack hit and dealt ";
+					}
+					else {
+						enemy_fight_log = "Ostatnia akcja przeciwnika:\nUderzenie krytyczne trafilo i zadalo\n";
+					}
 					enemy_fight_log.append(std::to_string(array_of_enemys[which_enemy].get_enemy_weapon_damage() * 2));
-					enemy_fight_log.append(" dmg");
+					if (english_language) {
+						enemy_fight_log.append(" dmg");
+					}
+					else {
+						enemy_fight_log.append(" punkty obrazen");
+					}
 				}
 			}
 			else {
-				enemy_fight_log = "Enemy last action:\nAttack missed";
+				if (english_language) {
+					enemy_fight_log = "Enemy last action:\nAttack missed";
+				}
+				else {
+					enemy_fight_log = "Ostatnia akcja przeciwnika:\nAtak nie trafil";
+				}
+				
 			}
 		}
 		fight_action = 0;
@@ -1019,11 +1271,17 @@ void Engine::draw_game_over_background() {
 	window->draw(game_over_background);
 }
 
-void Engine::draw_controls(int i, int j) {
-	std::string controls = "1. Postacia poruszamy za\npomoca klawiszy WSAD\n\n2. Akcje(czyli rozmowa\nz NPC, walka czy\nprzechodzenie przez drzwi)\nwykonujemy za pomoca\nspacji (nie mozesz stac \nna ukos od celu)";
+void Engine::draw_help(int i, int j) {
+	std::string controls;
+	if (english_language) {
+		controls = "Help: \n1. You can move your\ncharacter by using\narrows and WSAD\nkeys\n2. You can undertake\nthe action (talk\nwith NPC, fight or\nusage of doors)\nby usage of space bar\nkey(you can't use it \ncrosswise)"; 
+	}
+	else {
+		controls = "Pomoc: \n1. Postacia poruszamy\nza pomoca klawiszy\nWSAD\n\n2. Akcje(czyli rozmowa\nz NPC, walka czy\nprzechodzenie przez\ndrzwi)wykonujemy za\npomoca spacji\n(nie mozesz stac \nna ukos od celu)";
+	}
 	controls_t.setString(controls);
 	controls_t.setFont(font);
-	controls_t.setCharacterSize(16);
+	controls_t.setCharacterSize(18);
 	controls_t.setOutlineColor(sf::Color::Black);
 	controls_t.setOutlineThickness(2);
 	controls_t.setFillColor(sf::Color::White);
@@ -1041,7 +1299,12 @@ void Engine::draw_player_statistics(int i, int j)
 	player_weapon_damage_t.setString(weapon_damage_s);
 	std::string money_s = std::to_string(player.get_player_amount_of_money());
 	money_t.setString(money_s);
-	player_name.setString("Player:");
+	if (english_language) {
+		player_name.setString("Player:");
+	}
+	else {
+		player_name.setString("Gracz:");
+	}
 	player_name.setFont(font);
 	player_name.setCharacterSize(24);
 	player_name.setOutlineColor(sf::Color::Black);
@@ -1088,16 +1351,42 @@ void Engine::draw_enemy_statistics(int i, int j, Enemy enemy) {
 	enemy_hp_t.setString(hp_s);
 	std::string weapon_damage_s = std::to_string(enemy.get_enemy_weapon_damage());
 	enemy_weapon_damage_t.setString(weapon_damage_s);
-	std::string text_dodge_chance = "Dodge: ";
+	std::string text_dodge_chance;
+	if (english_language) {
+		text_dodge_chance = "Dodge: ";
+	}
+	else {
+		text_dodge_chance = "Unik: ";
+	}
 	std::string dodge_chance_s = text_dodge_chance.append(std::to_string(enemy.get_enemy_dodge_chance()));
-	enemy_name.setString(enemy.get_enemy_name());
+	if (english_language) {
+		enemy_name.setString(enemy.get_enemy_name());
+	}
+	else {
+		if (enemy.get_enemy_name() == "Basement rat") {
+			enemy_name.setString("Piwniczny szczur");
+		}
+		else {
+			enemy_name.setString("Krol szczurow");
+		}
+	}
 	enemy_name.setFont(font);
 	enemy_name.setCharacterSize(24);
 	enemy_name.setOutlineColor(sf::Color::Black);
 	enemy_name.setFillColor(sf::Color::White);
 	enemy_name.setOutlineThickness(2);
 	enemy_name.setStyle(sf::Text::Bold);
-	enemy_type_t.setString(enemy.get_enemy_type(true));
+	if (english_language) {
+		enemy_type_t.setString(enemy.get_enemy_type(true));
+	}
+	else {
+		if (enemy.get_enemy_type() == 0) {
+			enemy_type_t.setString("Typ: Szczur");
+		}
+		else {
+			enemy_type_t.setString("Typ: Boss");
+		}
+	}
 	enemy_hp_t.setFont(font);
 	enemy_hp_t.setCharacterSize(50);
 	enemy_hp_t.setOutlineColor(sf::Color::Black);
@@ -1220,7 +1509,12 @@ void Engine::draw_dialogue() {
 }
 
 void Engine::draw_action_window(int i, int j) {
-	list_of_actions.setString("1. Fast attack \n2. Heavy attack");
+	if (english_language) {
+		list_of_actions.setString("1. Light attack \n2. Heavy attack");
+	}
+	else {
+		list_of_actions.setString("1. Lekki atak \n2. Ciezki atak");
+	}
 	list_of_actions.setFont(font);
 	list_of_actions.setCharacterSize(24);
 	list_of_actions.setOutlineColor(sf::Color::Black);
@@ -1272,7 +1566,14 @@ void Engine::draw_quest_window(int i, int j) {
 
 void Engine::draw_quest(int i, int j)
 {
-	quest_string = "Killed rats(" + std::to_string(killed_rats)  + "/3)";
+	if (english_language) {
+		quest_string = "Deratization:\nKilled rats(" + std::to_string(killed_rats) + "/3)";
+		quest_name.setString("Quests:");
+	}
+	else {
+		quest_string = "Deratyzacja:\nZabite szczury(" + std::to_string(killed_rats) + "/3)";
+		quest_name.setString("Zadania:");
+	}
 	quest_text.setString(quest_string);
 	quest_text.setFont(font);
 	quest_text.setCharacterSize(16);
@@ -1280,7 +1581,6 @@ void Engine::draw_quest(int i, int j)
 	quest_text.setOutlineThickness(2);
 	quest_text.setFillColor(sf::Color::White);
 	quest_text.setStyle(sf::Text::Bold);
-	quest_name.setString("Quest:");
 	quest_name.setFont(font);
 	quest_name.setCharacterSize(16);
 	quest_name.setOutlineColor(sf::Color::Black);
@@ -1318,15 +1618,16 @@ void Engine::reset() {
 	player_turn = false;
 	after_fight = false;
 	game_continue = false;
+	show_help_window = false;
 	killed_rats = 0;
 }
 
 void Engine::which_button_guard() {
-	if (which_button > 2) {
+	if (which_button > 3) {
 		which_button = 0;
 	}
 	if (which_button < 0) {
-		which_button = 2;
+		which_button = 3;
 	}
 }
 
