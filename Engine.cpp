@@ -5,6 +5,7 @@ int which_enemy = -1;
 int which_response = 0;
 int killed_rats = 0;
 bool on_quest = false;
+bool done_quest = false;
 bool is_talking = false;
 bool first_contact = true;
 bool player_turn = false;
@@ -12,13 +13,14 @@ bool after_fight = false;
 bool game_continue = false;
 bool show_help_window = false;
 bool english_language = true;
-unsigned SIZE = 30;
+float SIZE = 30;
 int direction = 0;
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
 const float scale = 0.8;
 const float invScale = 1 / scale; 
 const int NUMBER_OF_ENEMYS = 3;
+
 
 Map map(SIZE);
 Npc npc1 = Npc(24, 5, "Innkeeper", 1);
@@ -48,17 +50,15 @@ void Engine::game_mode()
 
 void Engine::run()
 {
+	auto image = sf::Image{};
+	if (!image.loadFromFile("textures/ico.png"))
+	{
+		std::cout << "Can't find icon";
+	}
+	window->setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
 	map.create();
-	if (english_language) {
-		make_dialogue("Hi", "", "Goodbye.", "Give me beer", "Do you want some help?", "I will do it",
-			"Ok, here you are.", "Yes, I have problem with rats in the basement.", "Good luck, take my old sword.",
-			"Welcome stranger.", "You got rid of the rats in the basement!");
-	}
-	else {
-		make_dialogue("Witaj", "", "Zegnaj.", "Daj mi piwo", "Potrzebujesz pomocy?", "Zrobie to",
-			"Ok, prosze bardzo.", "Tak, mam problem z szczurami w piwnicy.", "Zycze powodzenia, wez moj stary miecz.",
-			"Witaj nieznajomy.", "Uda³o Ci siê pozbyæ szczurów z piwnicy!");
-	}
+	make_dialogue("Innkeeper: Welcome stranger", "Innkeeper: ...", "Innkeeper: Goodbye.", "Serve me beer", "Do you want some help?", "I will do it",
+			"Innkeeper: Ok, here you are.", "Innkeeper: Yes, I have problem with rats in the basement.", "Innkeeper: Good luck, take my old sword.");
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			npc1.set_dialogue(tab_npc[i][j], i, j);
@@ -101,6 +101,9 @@ void Engine::run()
 					draw_dialogue_window();
 					draw_dialogue();
 				}
+				if (show_help_window) {
+					draw_help(880, 400);
+				}
 				window->display();
 			}
 			break;
@@ -135,6 +138,9 @@ void Engine::run()
 					draw_dialogue_window();
 					draw_dialogue();
 				}
+				if (show_help_window) {
+					draw_help(880, 400);
+				}
 				window->display();
 			}
 			break;
@@ -165,6 +171,9 @@ void Engine::run()
 					draw_dialogue_window();
 					draw_dialogue();
 				}
+				if (show_help_window) {
+					draw_help(880, 400);
+				}
 				window->display();
 			}
 		case 100:
@@ -180,6 +189,9 @@ void Engine::run()
 				window->display();
 			}
 			after_fight = true;
+			if (killed_rats == 3) {
+				after_quest();
+			}
 			break;
 		case 200:
 			while (game_state == 200) {
@@ -219,19 +231,19 @@ void Engine::handle_events()
 			change_level(200);
 		}
 		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::A) 
-			|| (event.key.code == sf::Keyboard::Left)) && (is_talking == false)) {
+			|| (event.key.code == sf::Keyboard::Left)) && (is_talking == false) && (show_help_window == false)) {
 			movement(0);
 		}
 		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::W) 
-			|| (event.key.code == sf::Keyboard::Up)) && (is_talking == false)) {
+			|| (event.key.code == sf::Keyboard::Up)) && (is_talking == false) && (show_help_window == false)) {
 			movement(1);
 		}
 		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::S) 
-			|| (event.key.code == sf::Keyboard::Down)) && (is_talking == false)) {
+			|| (event.key.code == sf::Keyboard::Down)) && (is_talking == false) && (show_help_window == false)) {
 			movement(2);
 		}
 		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::D) 
-			|| (event.key.code == sf::Keyboard::Right)) && (is_talking == false)) {
+			|| (event.key.code == sf::Keyboard::Right)) && (is_talking == false) && (show_help_window == false)) {
 			movement(3);
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Space)) {
@@ -247,10 +259,14 @@ void Engine::handle_events()
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Q)) {
 			is_talking = false;
+			which_response = 0;
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Num1) && (is_talking == true)) {
-			if (player.get_player_amount_of_money() > 0 && player.get_player_hit_points() < 10) {
+			if (player.get_player_amount_of_money() > 0 && player.get_player_hit_points() < 10 && !done_quest) {
 				player.set_player_amount_of_money(player.get_player_amount_of_money() - 2);
+				player.set_player_hit_points(player.get_player_hit_points() + 1);
+			}
+			else if (player.get_player_hit_points() < 10 && done_quest) {
 				player.set_player_hit_points(player.get_player_hit_points() + 1);
 			}
 			which_response = 1;
@@ -258,6 +274,11 @@ void Engine::handle_events()
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Num2) && (is_talking == true)) {
 			which_response = 2;
+			if (killed_rats == 3) {
+				on_quest = false;
+				done_quest = true;
+			}
+
 			first_contact = false;
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Num3) && (is_talking == true)) {
@@ -265,7 +286,9 @@ void Engine::handle_events()
 				player.set_player_weapon_damage(player.get_player_weapon_damage() + 1);
 			}
 			which_response = 3;
-			on_quest = true;
+			if (!done_quest) {
+				on_quest = true;
+			}
 			first_contact = false;
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Num1) && (game_state>=100) && (game_state < 200)) {
@@ -295,6 +318,19 @@ void Engine::handle_events()
 				else {
 					english_language = true;
 				}
+				if (english_language && !done_quest) {
+					make_dialogue("Innkeeper: Welcome stranger", "Innkeeper:", "Innkeeper: Goodbye.", "Give me beer", "Do you want some help?", "I will do it",
+						"Innkeeper: Ok, here you are.", "Innkeeper: Yes, I have problem with rats in the basement.", "Innkeeper: Good luck, take my old sword.");
+				}
+				else{
+					make_dialogue("Karczmarz: Witaj nieznajomy", "Karczmarz:", "Karczmarz: Zegnaj.", "Daj mi piwo", "Potrzebujesz pomocy?", "Zrobie to",
+						"Karczmarz: Ok, prosze bardzo.", "Karczmarz: Tak, mam problem z szczurami w piwnicy.", "Karczmarz: Zycze powodzenia, wez moj stary miecz.");
+				}
+				for (int i = 0; i < 3; i++) {
+					for (int j = 0; j < 3; j++) {
+						npc1.set_dialogue(tab_npc[i][j], i, j);
+					}
+				}
 				break;
 			case 2:
 				change_level(201);
@@ -318,25 +354,36 @@ void Engine::handle_events()
 }
 
 void Engine::player_action() {
-	if ((map(player_x+1,player_y).get_state() == Field::states::DOORFORWARD || map(player_x - 1, player_y).get_state() == Field::states::DOORFORWARD)
-		|| (map(player_x, player_y+1).get_state() == Field::states::DOORFORWARD || map(player_x, player_y - 1).get_state() == Field::states::DOORFORWARD)) {
+	if ((map(player_x+1,player_y).get_state() == Field::states::DOORFORWARD || map(player_x + 1, player_y + 1).get_state() == Field::states::DOORFORWARD 
+		|| map(player_x, player_y+1).get_state() == Field::states::DOORFORWARD || map(player_x - 1, player_y+1).get_state() == Field::states::DOORFORWARD
+		|| map(player_x-1, player_y).get_state() == Field::states::DOORFORWARD || map(player_x - 1, player_y-1).get_state() == Field::states::DOORFORWARD
+		|| map(player_x, player_y-1).get_state() == Field::states::DOORFORWARD || map(player_x + 1, player_y-1).get_state() == Field::states::DOORFORWARD)) {
 		door_forward_used = true;
 		change_level(game_state + 1);
 	}
-	if ((map(player_x + 1, player_y).get_state() == Field::states::DOORBACK || map(player_x - 1, player_y).get_state() == Field::states::DOORBACK)
-		|| (map(player_x, player_y + 1).get_state() == Field::states::DOORBACK || map(player_x, player_y - 1).get_state() == Field::states::DOORBACK)) {
+	if ((map(player_x + 1, player_y).get_state() == Field::states::DOORBACK|| map(player_x + 1, player_y + 1).get_state() == Field::states::DOORBACK
+		|| map(player_x, player_y + 1).get_state() == Field::states::DOORBACK || map(player_x - 1, player_y + 1).get_state() == Field::states::DOORBACK
+		|| map(player_x - 1, player_y).get_state() == Field::states::DOORBACK|| map(player_x - 1, player_y - 1).get_state() == Field::states::DOORBACK
+		|| map(player_x, player_y - 1).get_state() == Field::states::DOORBACK || map(player_x + 1, player_y - 1).get_state() == Field::states::DOORBACK)) {
 		door_back_used = true;
 		change_level(game_state - 1);
 	}
-	if ((map(player_x + 1, player_y).get_state() == Field::states::NPC || map(player_x - 1, player_y).get_state() == Field::states::NPC)
-		|| (map(player_x, player_y + 1).get_state() == Field::states::NPC || map(player_x, player_y - 1).get_state() == Field::states::NPC)) {
+	if ((map(player_x + 1, player_y).get_state() == Field::states::NPC || map(player_x + 1, player_y + 1).get_state() == Field::states::NPC
+		|| map(player_x, player_y + 1).get_state() == Field::states::NPC || map(player_x - 1, player_y + 1).get_state() == Field::states::NPC
+		|| map(player_x - 1, player_y).get_state() == Field::states::NPC || map(player_x - 1, player_y - 1).get_state() == Field::states::NPC
+		|| map(player_x, player_y - 1).get_state() == Field::states::NPC || map(player_x + 1, player_y - 1).get_state() == Field::states::NPC)) {
 		is_talking = true;
 	}
-	if ((map(player_x + 1, player_y).get_state() == Field::states::ENEMY || map(player_x - 1, player_y).get_state() == Field::states::ENEMY)
-		|| (map(player_x, player_y + 1).get_state() == Field::states::ENEMY || map(player_x, player_y - 1).get_state() == Field::states::ENEMY)) {
+	if ((map(player_x + 1, player_y).get_state() == Field::states::ENEMY || map(player_x + 1, player_y + 1).get_state() == Field::states::ENEMY
+		|| map(player_x, player_y + 1).get_state() == Field::states::ENEMY || map(player_x - 1, player_y + 1).get_state() == Field::states::ENEMY
+		|| map(player_x - 1, player_y).get_state() == Field::states::ENEMY || map(player_x - 1, player_y - 1).get_state() == Field::states::ENEMY
+		|| map(player_x, player_y - 1).get_state() == Field::states::ENEMY || map(player_x + 1, player_y - 1).get_state() == Field::states::ENEMY)) {
 		for (int i = 0; i < NUMBER_OF_ENEMYS; i++) {
-			if ((player_x + 1 == array_of_enemys[i].get_enemy_x() && player_y == array_of_enemys[i].get_enemy_y()) || (player_x - 1 == array_of_enemys[i].get_enemy_x() && player_y == array_of_enemys[i].get_enemy_y())
-				|| (player_x == array_of_enemys[i].get_enemy_x() && player_y + 1== array_of_enemys[i].get_enemy_y()) || (player_x == array_of_enemys[i].get_enemy_x() && player_y - 1 == array_of_enemys[i].get_enemy_y())) {
+			if ((player_x + 1== array_of_enemys[i].get_enemy_x() && player_y == array_of_enemys[i].get_enemy_y() || player_x + 1 == array_of_enemys[i].get_enemy_x()
+				&& player_y + 1 == array_of_enemys[i].get_enemy_y() || player_x == array_of_enemys[i].get_enemy_x() && player_y +1 == array_of_enemys[i].get_enemy_y()
+				|| player_x - 1 == array_of_enemys[i].get_enemy_x() && player_y + 1 == array_of_enemys[i].get_enemy_y() || player_x - 1 == array_of_enemys[i].get_enemy_x()
+				&& player_y == array_of_enemys[i].get_enemy_y() || player_x - 1 == array_of_enemys[i].get_enemy_x() && player_y - 1 == array_of_enemys[i].get_enemy_y()
+				|| player_x == array_of_enemys[i].get_enemy_x() && player_y - 1 == array_of_enemys[i].get_enemy_y() || player_x + 1 == array_of_enemys[i].get_enemy_x() && player_y -1 == array_of_enemys[i].get_enemy_y())) {
 				which_enemy = i;
 				change_level(100);
 			}
@@ -481,14 +528,14 @@ void Engine::print_button(std::string name, int i, int j, int offset, bool butto
 	else {
 		button.setSize(sf::Vector2f(500, 100));
 	}
-	button.setPosition(i, j);
+	button.setPosition(float(i), float(j));
 	button_name.setFont(font);
 	button_name.setCharacterSize(50);
 	button_name.setOutlineColor(sf::Color::Black);
 	button_name.setOutlineThickness(5);
 	button_name.setFillColor(sf::Color::White);
 	button_name.setStyle(sf::Text::Bold);
-	button_name.setPosition(i+50+offset, j+20);
+	button_name.setPosition(float(i+50+offset), float(j+20));
 	button_name.setString(name);
 	window->draw(button);
 	window->draw(button_name);
@@ -596,8 +643,8 @@ void Engine::set_scene() {
 	unsigned** tab = 0;
 	switch (game_state) {
 	case 0:
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
+		for (unsigned i = 0; i < SIZE; i++) {
+			for (unsigned j = 0; j < SIZE; j++) {
 				map(i, j).set_state(Field::states::GRASS);
 			}
 		}
@@ -629,8 +676,8 @@ void Engine::set_scene() {
 		map(20, 25).set_state(Field::states::DECORATION);
 		break;
 	case 1:
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
+		for (unsigned i = 0; i < SIZE; i++) {
+			for (unsigned j = 0; j < SIZE; j++) {
 				map(i, j).set_state(Field::states::SAND);
 			}
 		}
@@ -664,8 +711,8 @@ void Engine::set_scene() {
 		}
 		break;
 	case 2:
-		for (int i = 0; i < SIZE; i++) {
-			for (int j = 0; j < SIZE; j++) {
+		for (unsigned i = 0; i < SIZE; i++) {
+			for (unsigned j = 0; j < SIZE; j++) {
 				map(i, j).set_state(Field::states::SAND);
 			}
 		}
@@ -699,15 +746,15 @@ void Engine::print_map() {
 	draw_background();
 	draw_quest(200, 150);
 	draw_player_statistics(1500, 150);
-	for (unsigned i = 0; i < SIZE; i++)
+	for (auto i = 0; unsigned(i) < SIZE; i++)
 	{
-		for (unsigned j = 0; j < SIZE; j++)
+		for (auto j = 0; unsigned(j) < SIZE; j++)
 		{
 
-			if (map(i, j).get_state() == Field::states::GRASS) {
-				draw_grass(i, j);
+			if (map(unsigned(i), unsigned(j)).get_state() == Field::states::GRASS) {
+				draw_grass(float(i), float(j));
 			}
-			if (map(i, j).get_state() == Field::states::SAND) {
+			if (map(unsigned(i), unsigned(j)).get_state() == Field::states::SAND) {
 				switch (game_state) {
 				case 0:
 					draw_sand(i, j);
@@ -720,11 +767,11 @@ void Engine::print_map() {
 					break;
 				}
 			}
-			if (map(i, j).get_state() == Field::states::ROCK) {
+			if (map(unsigned(i), unsigned(j)).get_state() == Field::states::ROCK) {
 				switch (game_state) {
 				case 0:
 					if (j != 0) {
-						draw_grass(i, j);
+						draw_grass(float(i), float(j));
 						draw_rock(i, j);
 					}
 					else if (i == 10 || i == 20) {
@@ -750,13 +797,13 @@ void Engine::print_map() {
 					break;
 				}
 			}
-			if (map(i, j).get_state() == Field::states::DOORFORWARD || map(i, j).get_state() == Field::states::DOORBACK) {
+			if (map(unsigned(i), unsigned(j)).get_state() == Field::states::DOORFORWARD || map(unsigned(i), unsigned(j)).get_state() == Field::states::DOORBACK) {
 				draw_door(i, j);
 			}
-			if (map(i, j).get_state() == Field::states::NPC) {
+			if (map(unsigned(i), unsigned(j)).get_state() == Field::states::NPC) {
 				switch (game_state) {
 				case 0:
-					draw_grass(i, j);
+					draw_grass(float(i), float(j));
 					break;
 				case 1:
 					draw_wooden_floor(i, j);
@@ -764,10 +811,10 @@ void Engine::print_map() {
 				}
 				draw_npc(i, j);
 			}
-			if (map(i, j).get_state() == Field::states::ENEMY) {
+			if (map(unsigned(i), unsigned(j)).get_state() == Field::states::ENEMY) {
 				switch (game_state) {
 				case 0:
-					draw_grass(i, j);
+					draw_grass(float(i), float(j));
 					break;
 				case 1:
 					draw_wooden_floor(i, j);
@@ -801,7 +848,7 @@ void Engine::print_map() {
 			if (map(i, j).get_state() == Field::states::DECORATION) {
 				switch (game_state) {
 				case 0:
-					draw_grass(i, j);
+					draw_grass(float(i), float(j));
 					draw_bush(i, j);
 					break;
 				case 1:
@@ -822,10 +869,6 @@ void Engine::print_map() {
 				}
 			}
 		}
-	}
-
-	if (show_help_window == true) {
-		draw_help(880, 400);
 	}
 }
 
@@ -996,11 +1039,21 @@ void Engine::prepare_textures() {
 	fight_background_tx.loadFromFile("textures/fight_background.png");
 	fight_background.setTexture(fight_background_tx);
 	font.loadFromFile("font/times-new-roman.ttf");
+	quest_icon_tx.loadFromFile("textures/quest_icon.png");
+	quest_icon.setTexture(quest_icon_tx);
+	stat_icon_tx.loadFromFile("textures/stat_icon.png");
+	stat_icon.setTexture(stat_icon_tx);
+	sword_icon.setTexture(sword_tx);
+	help_icon_tx.loadFromFile("textures/help_icon.png");
+	help_icon.setTexture(help_icon_tx);
+	enemy_icon_tx.loadFromFile("textures/enemy_icon.png");
+	enemy_icon.setTexture(enemy_icon_tx);
+
 }
 
 void Engine::make_dialogue(std::string greeting, std::string basic_replay, std::string farewell,
 	std::string dialogue_opt_1, std::string dialogue_opt_2, std::string dialogue_opt_3, std::string answer1,
-	std::string answer2, std::string answer3, std::string first_contact, std::string after_quest) {
+	std::string answer2, std::string answer3) {
 	tab_npc = new std::string * [3];
 	for (unsigned i = 0; i < 3; ++i) {
 		tab_npc[i] = new std::string[3];
@@ -1014,8 +1067,6 @@ void Engine::make_dialogue(std::string greeting, std::string basic_replay, std::
 	tab_npc[2][0] = answer1;
 	tab_npc[2][1] = answer2;
 	tab_npc[2][2] = answer3;
-	//tab_npc[3][0] = first_contact;
-	//tab_npc[3][1] = after_quest;
 }
 
 //Blok interakcji
@@ -1097,7 +1148,6 @@ void Engine::fight_handler() {
 			}
 			if (on_quest && killed_rats == 3) {
 				player.set_player_amount_of_money(player.get_player_amount_of_money() + 6);
-				on_quest = false;
 			}
 			game_state = old_game_state;
 			fight_action = 0;
@@ -1159,7 +1209,7 @@ void Engine::fight_handler() {
 
 //Blok rysowania
 
-void Engine::draw_grass(int i, int j)
+void Engine::draw_grass(float i, float j)
 {
 	grass.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
 	window->draw(grass);
@@ -1242,7 +1292,7 @@ void Engine::draw_enemy_rat(int i, int j) {
 }
 
 void Engine::draw_enemy_rat_big(int i, int j) {
-	enemy_big.setPosition(i, j);
+	enemy_big.setPosition(float(i), float(j));
 	window->draw(enemy_big);
 }
 
@@ -1257,7 +1307,7 @@ void Engine::draw_enemy_boss(int i, int j) {
 }
 
 void Engine::draw_enemy_boss_big(int i, int j) {
-	enemy_big_boss.setPosition(i, j);
+	enemy_big_boss.setPosition(float(i), float(j));
 	window->draw(enemy_big_boss);
 }
 
@@ -1271,13 +1321,13 @@ void Engine::draw_game_over_background() {
 	window->draw(game_over_background);
 }
 
-void Engine::draw_help(int i, int j) {
+void Engine::draw_help(float i, float j) {
 	std::string controls;
 	if (english_language) {
-		controls = "Help: \n1. You can move your\ncharacter by using\narrows and WSAD\nkeys\n2. You can undertake\nthe action (talk\nwith NPC, fight or\nusage of doors)\nby usage of space bar\nkey(you can't use it \ncrosswise)"; 
+		controls = "Help: \n1.You can move your\ncharacter by using\narrows and WSAD keys.\n2.You can undertake\nthe action (talk, fight \nor using doors) by\nusing space bar key.\n3.If you have problems\nit is worth to talk\nwith innkeeper."; 
 	}
 	else {
-		controls = "Pomoc: \n1. Postacia poruszamy\nza pomoca klawiszy\nWSAD\n\n2. Akcje(czyli rozmowa\nz NPC, walka czy\nprzechodzenie przez\ndrzwi)wykonujemy za\npomoca spacji\n(nie mozesz stac \nna ukos od celu)";
+		controls = "Pomoc: \n1.Postacia poruszamy\nza pomoca strzalek\ni klawiszy WSAD.\n2.Akcje(czyli rozmowa\n,walka czy uzywanie\ndrzwi)wykonujemy za\npomoca spacji.\n3.W razie klopotow\n warto porozmawiac\nz karczmarzem.";
 	}
 	controls_t.setString(controls);
 	controls_t.setFont(font);
@@ -1286,12 +1336,14 @@ void Engine::draw_help(int i, int j) {
 	controls_t.setOutlineThickness(2);
 	controls_t.setFillColor(sf::Color::White);
 	controls_t.setStyle(sf::Text::Bold);
-	controls_t.setPosition(i+10, j+10);
+	controls_t.setPosition(i+10.f, j+10.f);
+	help_icon.setPosition(i+150.f, j+225.f);
 	draw_controls_window(i, j);
+	window->draw(help_icon);
 	window->draw(controls_t);
 }
 
-void Engine::draw_player_statistics(int i, int j)
+void Engine::draw_player_statistics(float i, float j)
 {
 	std::string hp_s = std::to_string(player.get_player_hit_points());
 	player_hp_t.setString(hp_s);
@@ -1336,7 +1388,9 @@ void Engine::draw_player_statistics(int i, int j)
 	HP.setPosition(i+10, j+35);
 	sword.setPosition(i+10, j+100);
 	coin.setPosition(i+10, j+165);
+	stat_icon.setPosition(i+145,j+230);
 	draw_stat_window(i, j);
+	window->draw(stat_icon);
 	window->draw(player_name);
 	window->draw(HP);
 	window->draw(sword);
@@ -1346,7 +1400,7 @@ void Engine::draw_player_statistics(int i, int j)
 	window->draw(money_t);
 }
 
-void Engine::draw_enemy_statistics(int i, int j, Enemy enemy) {
+void Engine::draw_enemy_statistics(float i, float j, Enemy enemy) {
 	std::string hp_s = std::to_string(enemy.get_enemy_hit_points());
 	enemy_hp_t.setString(hp_s);
 	std::string weapon_damage_s = std::to_string(enemy.get_enemy_weapon_damage());
@@ -1419,7 +1473,9 @@ void Engine::draw_enemy_statistics(int i, int j, Enemy enemy) {
 	enemy_type_t.setPosition(i + 10, j + 195);
 	HP.setPosition(i + 10, j + 40);
 	sword.setPosition(i + 10, j + 105);
+	enemy_icon.setPosition(i + 140, j + 230);
 	draw_stat_window(i, j);
+	window->draw(enemy_icon);
 	window->draw(HP);
 	window->draw(sword);
 	window->draw(enemy_name);
@@ -1446,7 +1502,7 @@ void Engine::draw_player(int i, int j) {
 	}
 }
 
-void Engine::draw_player_big(int i, int j)
+void Engine::draw_player_big(float i, float j)
 {
 	player_big.setPosition(i, j);
 	window->draw(player_big);
@@ -1464,40 +1520,64 @@ void Engine::draw_dialogue_window() {
 }
 
 void Engine::draw_dialogue() {
-	if (first_contact) {
-		npc_response_t.setString(npc1.get_dialogue(0, 0));
-	}
-	else {
-		basic_npc_response_t.setString(npc1.get_dialogue(0, 1));
-	}
 	switch (which_response) {
+	case 0:
+		if (first_contact) {
+			npc_response_t.setString(npc1.get_dialogue(0, 0));
+		}
+		else {
+			npc_response_t.setString(npc1.get_dialogue(0, 1));
+		}
+		if (english_language) {
+			player_response_t2.setString("Player: ");
+		}
+		else {
+			player_response_t2.setString("Gracz: ");
+		}
+		break;
 	case 1:
 		npc_response_t.setString(npc1.get_dialogue(2, 0));
+		if (english_language) {
+			player_response_t2.setString("Player: " + npc1.get_dialogue(1, 0));
+		}
+		else {
+			player_response_t2.setString("Gracz: " + npc1.get_dialogue(1, 0));
+		}
 		break;
 	case 2:
 		npc_response_t.setString(npc1.get_dialogue(2, 1));
+		if (english_language) {
+			player_response_t2.setString("Player: " + npc1.get_dialogue(1, 1));
+		}
+		else {
+			player_response_t2.setString("Gracz: " + npc1.get_dialogue(1, 1));
+		}
 		break;
 	case 3:
 		npc_response_t.setString(npc1.get_dialogue(2, 2));
+		if (english_language) {
+			player_response_t2.setString("Player: " + npc1.get_dialogue(1, 2));
+		}
+		else {
+			player_response_t2.setString("Gracz: " + npc1.get_dialogue(1, 2));
+		}
 		break;
 	}
 	player_response_t.setString(combine_string(npc1.get_dialogue(1, 0), npc1.get_dialogue(1, 1), npc1.get_dialogue(1, 2)));
+	player_response_t2.setFont(font);
+	player_response_t2.setCharacterSize(24);
+	player_response_t2.setFillColor(sf::Color::White);
+	player_response_t2.setOutlineColor(sf::Color::Black);
+	player_response_t2.setOutlineThickness(2);
+	player_response_t2.setStyle(sf::Text::Bold);
+	player_response_t2.setPosition(10, 790);
 	npc_response_t.setFont(font);
 	npc_response_t.setCharacterSize(24);
 	npc_response_t.setFillColor(sf::Color::White);
 	npc_response_t.setOutlineColor(sf::Color::Black);
 	npc_response_t.setOutlineThickness(2);
 	npc_response_t.setStyle(sf::Text::Bold);
-	npc_response_t.setPosition(10, 785);
-	window->draw(npc_response_t);
-	basic_npc_response_t.setFont(font);
-	basic_npc_response_t.setCharacterSize(24);
-	basic_npc_response_t.setFillColor(sf::Color::White);
-	basic_npc_response_t.setOutlineColor(sf::Color::Black);
-	basic_npc_response_t.setOutlineThickness(2);
-	basic_npc_response_t.setStyle(sf::Text::Bold);
-	basic_npc_response_t.setPosition(10, 810);
-	window->draw(basic_npc_response_t);
+	npc_response_t.setPosition(10, 820);
 	player_response_t.setFont(font);
 	player_response_t.setCharacterSize(24);
 	player_response_t.setFillColor(sf::Color::White);
@@ -1505,28 +1585,32 @@ void Engine::draw_dialogue() {
 	player_response_t.setOutlineThickness(2);
 	player_response_t.setStyle(sf::Text::Bold);
 	player_response_t.setPosition(10, 900);
+	window->draw(player_response_t2);
+	window->draw(npc_response_t);
 	window->draw(player_response_t);
 }
 
-void Engine::draw_action_window(int i, int j) {
+void Engine::draw_action_window(float i, float j) {
 	if (english_language) {
-		list_of_actions.setString("1. Light attack \n2. Heavy attack");
+		list_of_actions.setString("Actions:\n1.Light attack\n(better chance to\nhit,but lower dmg).\n\n2.Heavy attack\n(lower chance to\nhit,but higher dmg).");
 	}
 	else {
-		list_of_actions.setString("1. Lekki atak \n2. Ciezki atak");
+		list_of_actions.setString("Akcje:\n1.Lekki atak\n(wieksza szansa na\ntrafienie,ale mniejsze\nobrazenia).\n\n2.Ciezki atak\n(mniejsza szansa na\ntrafienie,ale wieksze\nobrazenia).");
 	}
 	list_of_actions.setFont(font);
-	list_of_actions.setCharacterSize(24);
+	list_of_actions.setCharacterSize(20);
 	list_of_actions.setOutlineColor(sf::Color::Black);
 	list_of_actions.setOutlineThickness(2);
 	list_of_actions.setFillColor(sf::Color::White);
 	list_of_actions.setStyle(sf::Text::Bold);
 	list_of_actions.setPosition(i+10, j+10);
+	sword_icon.setPosition(i+145,j+230);
 	draw_stat_window(i, j);
+	window->draw(sword_icon);
 	window->draw(list_of_actions);
 }
 
-void Engine::draw_log_window(int i, int j) {
+void Engine::draw_log_window(float i, float j) {
 	player_last_action_t.setString(player_fight_log);
 	enemy_last_action_t.setString(enemy_fight_log);
 	player_last_action_t.setFont(font);
@@ -1549,22 +1633,22 @@ void Engine::draw_log_window(int i, int j) {
 	window->draw(enemy_last_action_t);
 }
 
-void Engine::draw_stat_window(int i, int j) {
+void Engine::draw_stat_window(float i, float j) {
 	stat_window.setPosition(i, j);
 	window->draw(stat_window);
 }
 
-void Engine::draw_controls_window(int i, int j) {
+void Engine::draw_controls_window(float i, float j) {
 	control_window.setPosition(i, j);
 	window->draw(control_window);
 }
 
-void Engine::draw_quest_window(int i, int j) {
+void Engine::draw_quest_window(float i, float j) {
 	quest_window.setPosition(i, j);
 	window->draw(quest_window);
 }
 
-void Engine::draw_quest(int i, int j)
+void Engine::draw_quest(float i, float j)
 {
 	if (english_language) {
 		quest_string = "Deratization:\nKilled rats(" + std::to_string(killed_rats) + "/3)";
@@ -1576,23 +1660,25 @@ void Engine::draw_quest(int i, int j)
 	}
 	quest_text.setString(quest_string);
 	quest_text.setFont(font);
-	quest_text.setCharacterSize(16);
+	quest_text.setCharacterSize(20);
 	quest_text.setOutlineColor(sf::Color::Black);
 	quest_text.setOutlineThickness(2);
 	quest_text.setFillColor(sf::Color::White);
 	quest_text.setStyle(sf::Text::Bold);
 	quest_name.setFont(font);
-	quest_name.setCharacterSize(16);
+	quest_name.setCharacterSize(24);
 	quest_name.setOutlineColor(sf::Color::Black);
 	quest_name.setOutlineThickness(2);
 	quest_name.setFillColor(sf::Color::White);
 	quest_name.setStyle(sf::Text::Bold);
 	quest_name.setPosition(i + 10, j + 10);
 	quest_text.setPosition(i + 10, j + 40);
+	quest_icon.setPosition(i + 150, j + 225);
 	draw_quest_window(i, j);
 	if (on_quest) {
 		window->draw(quest_text);
 	}
+	window->draw(quest_icon);
 	window->draw(quest_name);
 }
 
@@ -1619,7 +1705,23 @@ void Engine::reset() {
 	after_fight = false;
 	game_continue = false;
 	show_help_window = false;
-	killed_rats = 0;
+	done_quest = false;
+}
+
+void Engine::after_quest() {
+		if (english_language) {
+			make_dialogue("Innkeeper: Welcome stranger", "Innkeeper: ...", "Innkeeper: Goodbye.", "Serve me beer", "I killed all rats in your basement.", "How is the inn going?",
+				"Innkeeper: Ok, here you are.", "Innkeeper: Much obliged.In return you can drink beer in my inn for free.", "Innkeeper: Too bad, due to the increase in beer taxes, my inn is losing a lot of money");
+		}
+		else {
+			make_dialogue("Karczmarz: Witaj nieznajomy", "Karczmarz: ...", "Karczmarz: Zegnaj.", "Podaj mi piwo", "Zabilem wszystkie szczury z twojej piwnicy", "Jak idzie handel?",
+				"Karczmarz: Ok, prosze bardzo.", "Karczmarz: Jestem bardzo wdziêczny. W zamian za twoj¹ pomoc mo¿esz piæ piwo w mojej karczmie za darmo", "Karczmarz: Kiepsko, przez wzrost podatkow od piwa moja karczma traci wiele pieniedzy");
+		}
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				npc1.set_dialogue(tab_npc[i][j], i, j);
+			}
+		}
 }
 
 void Engine::which_button_guard() {
@@ -1642,7 +1744,12 @@ bool Engine::is_hit(int dodge_chance) {
 }
 
 std::string Engine::combine_string(std::string string1, std::string string2, std::string string3) {
-	return "1. " + string1 + "\n" + "2. " + string2 + "\n" + "3. " + string3 + "\n" + "Press Q to quit";
+	if (english_language) {
+		return "1. " + string1 + "\n" + "2. " + string2 + "\n" + "3. " + string3 + "\n" + "Press Q to quit";
+	}
+	else {
+		return "1. " + string1 + "\n" + "2. " + string2 + "\n" + "3. " + string3 + "\n" + "Kliknij Q, aby wyjsc";
+	}
 }
 
 

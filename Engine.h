@@ -23,12 +23,13 @@ private:
 	std::string player_fight_log, enemy_fight_log, quest_string;
 	sf::Sprite player0, player1, player2, player_big, npc, dialogue_window1, grass, sand, rock, door, background, enemy, enemy_big, dead_enemy, HP, sword,
 		coin, game_over_background, log_window, stat_window, fight_background, wooden_wall, wooden_floor, control_window, bar, table, bush, barrel, enemy_boss,
-		enemy_big_boss, dead_enemy_boss, window_s, quest_window, brick_wall;
+		enemy_big_boss, dead_enemy_boss, window_s, quest_window, brick_wall, stat_icon, quest_icon, sword_icon, help_icon, enemy_icon;
 	sf::Texture player0_tx, player1_tx, player2_tx, player_big_tx, npc_tx, dialogue_window_tx, grass_tx, sand_tx, rock_tx, door_tx, background_tx, enemy_tx,
 		enemy_big_tx, dead_enemy_tx, HP_tx, sword_tx, coin_tx, game_over_background_tx, log_window_tx, stat_window_tx, fight_background_tx, wooden_wall_tx, wooden_floor_tx, control_window_tx,
-		bar_tx, table_tx, bush_tx, barrel_tx, enemy_boss_tx, enemy_big_boss_tx, dead_enemy_boss_tx, window_tx, quest_window_tx, brick_wall_tx;
+		bar_tx, table_tx, bush_tx, barrel_tx, enemy_boss_tx, enemy_big_boss_tx, dead_enemy_boss_tx, window_tx, quest_window_tx, brick_wall_tx, stat_icon_tx,
+		quest_icon_tx, help_icon_tx, enemy_icon_tx;
 	sf::Font font;
-	sf::Text npc_response_t, basic_npc_response_t, player_response_t, money_t, player_weapon_damage_t, player_dodge_chance_t, player_hp_t, game_over_t, list_of_actions,
+	sf::Text npc_response_t, basic_npc_response_t, player_response_t, player_response_t2, money_t, player_weapon_damage_t, player_dodge_chance_t, player_hp_t, game_over_t, list_of_actions,
 		enemy_hp_t, enemy_weapon_damage_t, enemy_dodge_chance_t, enemy_type_t, player_last_action_t, enemy_last_action_t, controls_t, button_name, title, enemy_name, player_name, quest_text, quest_name;
 	sf::View credits_view;
 
@@ -72,14 +73,14 @@ public:
 	void prepare_textures();
 	void make_dialogue(std::string greeting, std::string basic_replay, std::string farewell,
 		std::string dialogue_opt_1, std::string dialogue_opt_2, std::string dialogue_opt_3, std::string answer1,
-		std::string answer2, std::string answer3, std::string first_contact, std::string after_quest);
+		std::string answer2, std::string answer3);
 
 	//Blok interakcji
 	void fight_handler();
 
 	//Blok rysowania
 	void draw_sand(int i, int j);
-	void draw_grass(int i, int j);
+	void draw_grass(float i, float j);
 	void draw_rock(int i, int j);
 	void draw_wooden_wall(int i, int j);
 	void draw_wooden_floor(int i, int j);
@@ -87,7 +88,7 @@ public:
 	void draw_bar(int i, int j);
 	void draw_door(int i, int j);
 	void draw_window(int i, int j);
-	void draw_quest(int i, int j);
+	void draw_quest(float i, float j);
 	void draw_table(int i, int j);
 	void draw_bush(int i, int j);
 	void draw_barrel(int i, int j);
@@ -100,22 +101,23 @@ public:
 	void draw_dead_enemy_boss(int i, int j);
 	void draw_background();
 	void draw_game_over_background();
-	void draw_player_statistics(int i, int j);
-	void draw_help(int i, int j);
-	void draw_enemy_statistics(int i, int j, Enemy enemy);
+	void draw_player_statistics(float i, float j);
+	void draw_help(float i, float j);
+	void draw_enemy_statistics(float i, float j, Enemy enemy);
 	void draw_player(int i, int j);
-	void draw_player_big(int i, int j);
+	void draw_player_big(float i, float j);
 	void draw_dialogue();
 	void draw_dialogue_window();
-	void draw_action_window(int i, int j);
-	void draw_stat_window(int i, int j);
-	void draw_controls_window(int i, int j);
-	void draw_log_window(int i, int j);
-	void draw_quest_window(int i, int j);
+	void draw_action_window(float i, float j);
+	void draw_stat_window(float i, float j);
+	void draw_controls_window(float i, float j);
+	void draw_log_window(float i, float j);
+	void draw_quest_window(float i, float j);
 	void draw_fight_background();
 
 	//Utylity
 	void reset();
+	void after_quest();
 	void which_button_guard();
 	bool is_hit(int dodge_chance);
 	std::string combine_string(std::string string1, std::string string2, std::string string3);

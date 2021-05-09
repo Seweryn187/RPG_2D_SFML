@@ -1,1 +1,7 @@
-﻿
+﻿  Engine.cpp
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie_do_komunikacji_człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\Engine.cpp(20,24): warning C4305: 'initializing': truncation from 'double' to 'float'
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie_do_komunikacji_człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\Engine.cpp(25,9): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie_do_komunikacji_człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\Engine.cpp(621,47): warning C4305: 'argument': truncation from 'double' to 'float'
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie_do_komunikacji_człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\Engine.cpp(1781,15): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie_do_komunikacji_człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\Engine.cpp(1782,15): warning C4244: 'initializing': conversion from 'float' to 'unsigned int', possible loss of data
+  ProjektGrafikaKomputerowa.vcxproj -> E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie_do_komunikacji_człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\x64\Debug\ProjektGrafikaKomputerowa.exe

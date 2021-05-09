@@ -1,0 +1,2 @@
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie do komunikacji człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\x64\Debug\ProjektGrafikaKomputerowa.exe
+E:\Uczelnia\Informatyka_VI_semestr\Wprowadzenie_do_komunikacji_człowiek-komputer\Laboratorium\Interfejs\RPG_2D_SFML\x64\Debug\ProjektGrafikaKomputerowa.exe
