@@ -4,6 +4,7 @@
 int which_enemy = -1;
 int which_response = 0;
 int killed_rats = 0;
+int which_apperance = 0;
 bool on_quest = false;
 bool done_quest = false;
 bool is_talking = false;
@@ -194,6 +195,8 @@ void Engine::run()
 			}
 			break;
 		case 200:
+			player_input = "";
+			player_text.setString("");
 			while (game_state == 200) {
 				print_menu();
 				handle_events();
@@ -201,8 +204,24 @@ void Engine::run()
 			}
 			break;
 		case 201:
-			while (game_state == 201){
+			while (game_state == 201) {
 				print_credits();
+			}
+			break;
+		case 202:
+			while (game_state == 202) {
+				draw_background();
+ 				handle_events();
+ 				draw_selection_menu();
+				window->display();
+			}
+			break;
+		case 203:
+			while (game_state == 203) {
+				draw_name_select();
+				handle_events();
+				window->draw(player_text);
+				window->display();
 			}
 			break;
 		}
@@ -228,22 +247,23 @@ void Engine::handle_events()
 {
 	while (window->pollEvent(event)) {
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Escape) && (game_state >= 0)) {
+			which_button = 0;
 			change_level(200);
 		}
-		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::A) 
-			|| (event.key.code == sf::Keyboard::Left)) && (is_talking == false) && (show_help_window == false)) {
+		if (((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::A) 
+			|| (event.key.code == sf::Keyboard::Left)) && (is_talking == false) && (show_help_window == false)) && game_state < 100) {
 			movement(0);
 		}
-		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::W) 
-			|| (event.key.code == sf::Keyboard::Up)) && (is_talking == false) && (show_help_window == false)) {
+		if (((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::W) 
+			|| (event.key.code == sf::Keyboard::Up)) && (is_talking == false) && (show_help_window == false)) && game_state < 100) {
 			movement(1);
 		}
-		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::S) 
-			|| (event.key.code == sf::Keyboard::Down)) && (is_talking == false) && (show_help_window == false)) {
+		if (((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::S) 
+			|| (event.key.code == sf::Keyboard::Down)) && (is_talking == false) && (show_help_window == false)) && game_state < 100) {
 			movement(2);
 		}
-		if ((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::D) 
-			|| (event.key.code == sf::Keyboard::Right)) && (is_talking == false) && (show_help_window == false)) {
+		if (((event.type == sf::Event::KeyPressed) && ((event.key.code == sf::Keyboard::D) 
+			|| (event.key.code == sf::Keyboard::Right)) && (is_talking == false) && (show_help_window == false)) && game_state < 100) {
 			movement(3);
 		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Space)) {
@@ -297,19 +317,29 @@ void Engine::handle_events()
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Num2) && (game_state >= 100) && (game_state < 200)) {
 			fight_action = 2;
 		}
-		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Up) && (game_state >= 200)) {
+		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Up) && (game_state == 200)) {
 			which_button -= 1;
 			which_button_guard();
 		}
-		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Down) && (game_state >= 200)) {
+		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Down) && (game_state == 200)) {
 			which_button += 1;
 			which_button_guard();
 		}
-		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Enter) && (game_state >= 200)) {
+		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Right) && (game_state == 202)) {
+			which_button += 1;
+			which_button_guard();
+		}
+		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Left) && (game_state == 202)) {
+			which_button -= 1;
+			which_button_guard();
+		}
+
+		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Enter) && (game_state == 200)) {
 			switch (which_button) {
 			case 0:
 				reset();
-				change_level(0);
+				change_level(202);
+				which_button = 0;
 				break;
 			case 1:
 				if (english_language == true) {
@@ -340,6 +370,33 @@ void Engine::handle_events()
 				break;
 			}
 		}
+		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Enter) && (game_state == 202)) {
+			switch (which_button) {
+			case 0:
+				which_apperance += 1;
+				which_apperance_guard();
+				break;
+			case 1:
+				change_level(203);
+				break;
+			}
+		}
+		if (event.type == sf::Event::TextEntered && (game_state == 203)) {
+			if (event.text.unicode < 128)
+			{
+				if (event.text.unicode == '\b') {
+					player_input.erase(player_input.getSize() - 1, 1);
+				}
+				else if (event.text.unicode == 27 || player_input.getSize() > 12) {}
+				else {
+					player_input += event.text.unicode;
+				}
+				player_text.setString(player_input);
+			}
+		}
+		if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Enter) && (game_state == 203)) {
+			change_level(0);
+		}
 		if ((event.type == sf::Event::KeyReleased) && (event.key.code == sf::Keyboard::Escape) && (game_state == 201)) {
 			change_level(0);
 		}
@@ -368,11 +425,15 @@ void Engine::player_action() {
 		door_back_used = true;
 		change_level(game_state - 1);
 	}
-	if ((map(player_x + 1, player_y).get_state() == Field::states::NPC || map(player_x + 1, player_y + 1).get_state() == Field::states::NPC
-		|| map(player_x, player_y + 1).get_state() == Field::states::NPC || map(player_x - 1, player_y + 1).get_state() == Field::states::NPC
-		|| map(player_x - 1, player_y).get_state() == Field::states::NPC || map(player_x - 1, player_y - 1).get_state() == Field::states::NPC
-		|| map(player_x, player_y - 1).get_state() == Field::states::NPC || map(player_x + 1, player_y - 1).get_state() == Field::states::NPC)) {
-		is_talking = true;
+	if (player_x < 28) {
+		if ((map(player_x + 1, player_y).get_state() == Field::states::NPC || map(player_x + 1, player_y + 1).get_state() == Field::states::NPC
+			|| map(player_x, player_y + 1).get_state() == Field::states::NPC || map(player_x - 1, player_y + 1).get_state() == Field::states::NPC
+			|| map(player_x - 1, player_y).get_state() == Field::states::NPC || map(player_x - 1, player_y - 1).get_state() == Field::states::NPC
+			|| map(player_x, player_y - 1).get_state() == Field::states::NPC || map(player_x + 1, player_y - 1).get_state() == Field::states::NPC)
+			|| map(player_x + 2, player_y).get_state() == Field::states::NPC || map(player_x + 2, player_y + 1).get_state() == Field::states::NPC
+			|| map(player_x + 2, player_y - 1).get_state() == Field::states::NPC) {
+			is_talking = true;
+		}
 	}
 	if ((map(player_x + 1, player_y).get_state() == Field::states::ENEMY || map(player_x + 1, player_y + 1).get_state() == Field::states::ENEMY
 		|| map(player_x, player_y + 1).get_state() == Field::states::ENEMY || map(player_x - 1, player_y + 1).get_state() == Field::states::ENEMY
@@ -429,7 +490,7 @@ void Engine::movement(int m_direction) {
 
 
 void Engine::print_menu() {
-	draw_background();
+	draw_menu_background();
 	switch (which_button) {
 	case 0:
 		print_title();
@@ -502,11 +563,11 @@ void Engine::print_title() {
 	title.setFillColor(sf::Color::White);
 	title.setStyle(sf::Text::Bold);
 	if (english_language) {
-		title.setPosition(500, 50);
+		title.setPosition(500, 80);
 		title.setString("Inns and rats: Roleplaying game");
 	}
 	else {
-		title.setPosition(550, 50);
+		title.setPosition(550, 80);
 		title.setString("Tawerny i szczury: gra RPG");
 	}
 	window->draw(title);
@@ -916,7 +977,7 @@ void Engine::print_fight_scene() {
 	else {
 		draw_enemy_boss_big(1150, 70);
 	}
-	draw_player_big(250, 675);
+	draw_player_big_back(250, 675);
 	draw_log_window(1150,675);
 }
 
@@ -939,7 +1000,8 @@ void Engine::game_over() {
 		game_over_t.setPosition(150, 250);
 		game_over_t.setString("                Koniec Gry\n     Nacisnij ESC, zeby wyjsc\nNacisnij Enter, zeby kontynuowac");
 	}
-	draw_game_over_background();
+	draw_fight_background();
+	draw_skeleton(500, 650);
 	window->draw(game_over_t);
 }
 
@@ -970,14 +1032,26 @@ void Engine::place_enemys() {
 
 
 void Engine::prepare_textures() {
-	player0_tx.loadFromFile("textures/player_0.png");
-	player0.setTexture(player0_tx);
-	player1_tx.loadFromFile("textures/player_1.png");
-	player1.setTexture(player1_tx);
-	player2_tx.loadFromFile("textures/player_2.png");
-	player2.setTexture(player2_tx);
-	player_big_tx.loadFromFile("textures/player_big.png");
-	player_big.setTexture(player_big_tx);
+	player_0_green_tx.loadFromFile("textures/player_0_green.png");
+	player_0_green.setTexture(player_0_green_tx);
+	player_1_green_tx.loadFromFile("textures/player_1_green.png");
+	player_1_green.setTexture(player_1_green_tx);
+	player_2_green_tx.loadFromFile("textures/player_2_green.png");
+	player_2_green.setTexture(player_2_green_tx);
+	player_big_back_green_tx.loadFromFile("textures/player_big_back_green.png");
+	player_big_back_green.setTexture(player_big_back_green_tx);
+	player_big_front_green_tx.loadFromFile("textures/player_big_front_green.png");
+	player_big_front_green.setTexture(player_big_front_green_tx);
+	player_0_red_tx.loadFromFile("textures/player_0_red.png");
+	player_0_red.setTexture(player_0_red_tx);
+	player_1_red_tx.loadFromFile("textures/player_1_red.png");
+	player_1_red.setTexture(player_1_red_tx);
+	player_2_red_tx.loadFromFile("textures/player_2_red.png");
+	player_2_red.setTexture(player_2_red_tx);
+	player_big_back_red_tx.loadFromFile("textures/player_big_back_red.png");
+	player_big_back_red.setTexture(player_big_back_red_tx);
+	player_big_front_red_tx.loadFromFile("textures/player_big_front_red.png");
+	player_big_front_red.setTexture(player_big_front_red_tx);
 	npc_tx.loadFromFile("textures/npc.bmp");
 	npc.setTexture(npc_tx);
 	dialogue_window_tx.loadFromFile("textures/dialogue_window.png");
@@ -1012,6 +1086,8 @@ void Engine::prepare_textures() {
 	barrel.setTexture(barrel_tx);
 	background_tx.loadFromFile("textures/background.png");
 	background.setTexture(background_tx);
+	menu_background_tx.loadFromFile("textures/menu_background.png");
+	menu_background.setTexture(menu_background_tx);
 	enemy_tx.loadFromFile("textures/enemy.png");
 	enemy.setTexture(enemy_tx);
 	enemy_big_tx.loadFromFile("textures/enemy_big.png");
@@ -1030,8 +1106,8 @@ void Engine::prepare_textures() {
 	sword.setTexture(sword_tx);
 	coin_tx.loadFromFile("textures/coin.png");
 	coin.setTexture(coin_tx);
-	game_over_background_tx.loadFromFile("textures/game_over_background.png");
-	game_over_background.setTexture(game_over_background_tx);
+	skeleton_tx.loadFromFile("textures/skeleton.png");
+	skeleton.setTexture(skeleton_tx);
 	stat_window_tx.loadFromFile("textures/stat_window.png");
 	stat_window.setTexture(stat_window_tx);
 	log_window_tx.loadFromFile("textures/log_window.png");
@@ -1081,10 +1157,10 @@ void Engine::fight_handler() {
 			if (is_hit(array_of_enemys[which_enemy].get_enemy_dodge_chance())) {
 				array_of_enemys[which_enemy].set_enemy_hit_points(array_of_enemys[which_enemy].get_enemy_hit_points() - player.get_player_weapon_damage());
 				if (english_language) {
-					player_fight_log = "Player last action:\nLight attack hit and dealt ";
+					player_fight_log = player.get_player_name() + " last action:\nLight attack hit and dealt ";
 				}
 				else {
-					player_fight_log = "Ostatnia akcja gracza:\nLekki atak uderzyl i zadal  ";
+					player_fight_log = "Ostatnia akcja " + player.get_player_name() + "\nLekki atak uderzyl i zadal  ";
 				}
 				player_fight_log.append(std::to_string(player.get_player_weapon_damage()));
 				if (english_language) {
@@ -1101,10 +1177,10 @@ void Engine::fight_handler() {
 			}
 			else {
 				if (english_language) {
-					player_fight_log = "Player last action:\nLight attack missed";
+					player_fight_log = player.get_player_name() + " last action:\nLight attack missed";
 				}
 				else {
-					player_fight_log = "Ostatnia akcja gracza:\nLekki atak nie trafil";
+					player_fight_log = "Ostatnia akcja " + player.get_player_name() + ":\nLekki atak nie trafil";
 				}
 			}
 			break;
@@ -1112,10 +1188,10 @@ void Engine::fight_handler() {
 			if (is_hit(array_of_enemys[which_enemy].get_enemy_dodge_chance() * 2)) {
 				array_of_enemys[which_enemy].set_enemy_hit_points(array_of_enemys[which_enemy].get_enemy_hit_points() - player.get_player_weapon_damage() * 2);
 				if (english_language) {
-					player_fight_log = "Player last action:\nHeavy attack hit and dealt ";
+					player_fight_log = player.get_player_name() +" last action:\nHeavy attack hit and dealt ";
 				}
 				else {
-					player_fight_log = "Ostatnia akcja gracza:\nCiezki atak trafil i zadal ";
+					player_fight_log = "Ostatnia akcja " + player.get_player_name() + ":\nCiezki atak trafil i zadal ";
 				}
 				player_fight_log.append(std::to_string(player.get_player_weapon_damage()*2));
 				if (english_language) {
@@ -1127,10 +1203,10 @@ void Engine::fight_handler() {
 			}
 			else {
 				if (english_language) {
-					player_fight_log = "Player last action:\nLight attack missed";
+					player_fight_log = player.get_player_name() + " last action:\nLight attack missed";
 				}
 				else {
-					player_fight_log = "Ostatnia akcja gracza:\nCiezki atak nie trafil";
+					player_fight_log = "Ostatnia akcja " + player.get_player_name() + ":\nCiezki atak nie trafil";
 				}
 			}
 			break;
@@ -1286,6 +1362,11 @@ void Engine::draw_background() {
 	window->draw(background);
 }
 
+void Engine::draw_menu_background() {
+	menu_background.setPosition(0, 0);
+	window->draw(menu_background);
+}
+
 void Engine::draw_enemy_rat(int i, int j) {
 	enemy.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
 	window->draw(enemy);
@@ -1314,11 +1395,6 @@ void Engine::draw_enemy_boss_big(int i, int j) {
 void Engine::draw_dead_enemy_boss(int i, int j) {
 	dead_enemy_boss.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
 	window->draw(dead_enemy_boss);
-}
-
-void Engine::draw_game_over_background() {
-	game_over_background.setPosition(0,0);
-	window->draw(game_over_background);
 }
 
 void Engine::draw_help(float i, float j) {
@@ -1351,12 +1427,7 @@ void Engine::draw_player_statistics(float i, float j)
 	player_weapon_damage_t.setString(weapon_damage_s);
 	std::string money_s = std::to_string(player.get_player_amount_of_money());
 	money_t.setString(money_s);
-	if (english_language) {
-		player_name.setString("Player:");
-	}
-	else {
-		player_name.setString("Gracz:");
-	}
+	player_name.setString(player.get_player_name() + ":");
 	player_name.setFont(font);
 	player_name.setCharacterSize(24);
 	player_name.setOutlineColor(sf::Color::Black);
@@ -1488,24 +1559,60 @@ void Engine::draw_enemy_statistics(float i, float j, Enemy enemy) {
 void Engine::draw_player(int i, int j) {
 	switch (direction) {
 	case 0:
-		player0.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
-		window->draw(player0);
+		if (which_apperance == 0) {
+			player_0_green.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
+			window->draw(player_0_green);
+		}
+		else {
+			player_0_red.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
+			window->draw(player_0_red);
+		}
 		break;
 	case 1:
-		player1.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
-		window->draw(player1);
+		if (which_apperance == 0) {
+			player_1_green.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
+			window->draw(player_1_green);
+		}
+		else {
+			player_1_red.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
+			window->draw(player_1_red);
+		}
 		break;
 	case 2:
-		player2.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
-		window->draw(player2);
+		if (which_apperance == 0) {
+			player_2_green.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
+			window->draw(player_2_green);
+		}
+		else {
+			player_2_red.setPosition(i * 35.f + (960 - (SIZE * 35) / 2), j * 35.f + (540 - (SIZE * 35) / 2));
+			window->draw(player_2_red);
+		}
 		break;
 	}
 }
 
-void Engine::draw_player_big(float i, float j)
+void Engine::draw_player_big_back(float i, float j)
 {
-	player_big.setPosition(i, j);
-	window->draw(player_big);
+	if (which_apperance == 0) {
+		player_big_back_green.setPosition(i, j);
+		window->draw(player_big_back_green);
+	}
+	else {
+		player_big_back_red.setPosition(i, j);
+		window->draw(player_big_back_red);
+	}
+}
+
+void Engine::draw_player_big_front(float i, float j)
+{
+	if (which_apperance == 0) {
+		player_big_front_green.setPosition(i, j);
+		window->draw(player_big_front_green);
+	}
+	else {
+		player_big_front_red.setPosition(i, j);
+		window->draw(player_big_front_red);
+	}
 }
 
 void Engine::draw_npc(int i, int j)
@@ -1519,6 +1626,11 @@ void Engine::draw_dialogue_window() {
 	window->draw(dialogue_window1);
 }
 
+void Engine::draw_skeleton(float i, float j) {
+	skeleton.setPosition(i, j);
+	window->draw(skeleton);
+}
+
 void Engine::draw_dialogue() {
 	switch (which_response) {
 	case 0:
@@ -1528,38 +1640,33 @@ void Engine::draw_dialogue() {
 		else {
 			npc_response_t.setString(npc1.get_dialogue(0, 1));
 		}
-		if (english_language) {
-			player_response_t2.setString("Player: ");
-		}
-		else {
-			player_response_t2.setString("Gracz: ");
-		}
+		player_response_t2.setString(player.get_player_name() + ":");
 		break;
 	case 1:
 		npc_response_t.setString(npc1.get_dialogue(2, 0));
 		if (english_language) {
-			player_response_t2.setString("Player: " + npc1.get_dialogue(1, 0));
+			player_response_t2.setString(player.get_player_name() + ": " + npc1.get_dialogue(1, 0));
 		}
 		else {
-			player_response_t2.setString("Gracz: " + npc1.get_dialogue(1, 0));
+			player_response_t2.setString(player.get_player_name() + ": " + npc1.get_dialogue(1, 0));
 		}
 		break;
 	case 2:
 		npc_response_t.setString(npc1.get_dialogue(2, 1));
 		if (english_language) {
-			player_response_t2.setString("Player: " + npc1.get_dialogue(1, 1));
+			player_response_t2.setString(player.get_player_name() + ": " + npc1.get_dialogue(1, 1));
 		}
 		else {
-			player_response_t2.setString("Gracz: " + npc1.get_dialogue(1, 1));
+			player_response_t2.setString(player.get_player_name() + ": " + npc1.get_dialogue(1, 1));
 		}
 		break;
 	case 3:
 		npc_response_t.setString(npc1.get_dialogue(2, 2));
 		if (english_language) {
-			player_response_t2.setString("Player: " + npc1.get_dialogue(1, 2));
+			player_response_t2.setString(player.get_player_name() + ": " + npc1.get_dialogue(1, 2));
 		}
 		else {
-			player_response_t2.setString("Gracz: " + npc1.get_dialogue(1, 2));
+			player_response_t2.setString(player.get_player_name() + ": " + npc1.get_dialogue(1, 2));
 		}
 		break;
 	}
@@ -1687,6 +1794,93 @@ void Engine::draw_fight_background() {
 	window->draw(fight_background);
 }
 
+void Engine::draw_selection_menu() {
+	draw_menu_background();
+	selection_menu_text1.setFont(font);
+	selection_menu_text1.setCharacterSize(70);
+	selection_menu_text1.setOutlineColor(sf::Color::Black);
+	selection_menu_text1.setOutlineThickness(5);
+	selection_menu_text1.setFillColor(sf::Color::White);
+	selection_menu_text1.setStyle(sf::Text::Bold);
+
+	if (english_language) {
+		selection_menu_text1.setPosition(600, 100);
+		selection_menu_text1.setString("Choose your appearance: ");
+	}
+	else {
+		selection_menu_text1.setPosition(650, 100);
+		selection_menu_text1.setString("Wybierz swoj wyglad: ");
+	}
+
+	draw_player_big_front(500, 300);
+	draw_player_big_back(1100, 300);
+
+	switch (which_button) {
+	case 0:
+		if (english_language == true) {
+			print_button("CONFIRM", 1050, 850, 25, false);
+			print_button("NEXT", 450, 850, 80, true);
+		}
+		else {
+			print_button("ZATWIERDZ", 1050, 850, 50, false);
+			print_button("KOLEJNY", 350, 850, 90, true);
+		}
+		break;
+	case 1:
+		if (english_language == true) {
+			print_button("CONFIRM", 1050, 850, 25, true);
+			print_button("NEXT", 450, 850, 80, false);
+		}
+		else {
+			print_button("ZATWIERDZ", 1050, 850, 50, true);
+			print_button("KOLEJNY", 350, 850, 90, false);
+		}
+		break;
+	}
+
+
+	window->draw(selection_menu_text1);
+
+}
+
+void Engine::draw_name_select() {
+	draw_menu_background();
+	name_select_text.setFont(font);
+	name_select_text.setCharacterSize(70);
+	name_select_text.setOutlineColor(sf::Color::Black);
+	name_select_text.setOutlineThickness(5);
+	name_select_text.setFillColor(sf::Color::White);
+	name_select_text.setStyle(sf::Text::Bold);
+	player_text.setFont(font);
+	player_text.setCharacterSize(70);
+	player_text.setOutlineColor(sf::Color::Black);
+	player_text.setOutlineThickness(5);
+	player_text.setFillColor(sf::Color::Red);
+	player_text.setStyle(sf::Text::Bold);
+	if (english_language) {
+		name_select_text.setPosition(700, 480);
+		name_select_text.setString("Enter player name: ");
+		player_text.setPosition(700, 550);
+	}
+	else {
+		name_select_text.setPosition(700, 480);
+		name_select_text.setString("Podaj  nazwe gracza:");
+		player_text.setPosition(700, 580);
+	}
+	if (player_input.getSize() > 0) {
+		player.set_player_name(player_input);
+	}
+	else {
+		if (english_language) {
+			player.set_player_name("Nameless");
+		}
+		else {
+			player.set_player_name("Bezimienny");
+		}
+	}
+	window->draw(name_select_text);
+}
+
 //Utylity
 
 void Engine::reset() {
@@ -1706,6 +1900,7 @@ void Engine::reset() {
 	game_continue = false;
 	show_help_window = false;
 	done_quest = false;
+	which_apperance = 0;
 }
 
 void Engine::after_quest() {
@@ -1725,11 +1920,30 @@ void Engine::after_quest() {
 }
 
 void Engine::which_button_guard() {
-	if (which_button > 3) {
-		which_button = 0;
+	if (game_state == 200) {
+		if (which_button > 3) {
+			which_button = 0;
+		}
+		if (which_button < 0) {
+			which_button = 3;
+		}
 	}
-	if (which_button < 0) {
-		which_button = 3;
+	else if(game_state == 202){
+		if (which_button > 1) {
+			which_button = 0;
+		}
+		if (which_button < 0) {
+			which_button = 1;
+		}
+	}
+}
+
+void Engine::which_apperance_guard() {
+	if (which_apperance > 1) {
+		which_apperance = 0;
+	}
+	if (which_apperance < 0) {
+		which_apperance = 1;
 	}
 }
 

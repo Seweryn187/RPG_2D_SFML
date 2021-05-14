@@ -21,16 +21,20 @@ private:
 	bool door_back_used = false;
 	bool door_forward_used = false;
 	std::string player_fight_log, enemy_fight_log, quest_string;
-	sf::Sprite player0, player1, player2, player_big, npc, dialogue_window1, grass, sand, rock, door, background, enemy, enemy_big, dead_enemy, HP, sword,
-		coin, game_over_background, log_window, stat_window, fight_background, wooden_wall, wooden_floor, control_window, bar, table, bush, barrel, enemy_boss,
-		enemy_big_boss, dead_enemy_boss, window_s, quest_window, brick_wall, stat_icon, quest_icon, sword_icon, help_icon, enemy_icon;
-	sf::Texture player0_tx, player1_tx, player2_tx, player_big_tx, npc_tx, dialogue_window_tx, grass_tx, sand_tx, rock_tx, door_tx, background_tx, enemy_tx,
-		enemy_big_tx, dead_enemy_tx, HP_tx, sword_tx, coin_tx, game_over_background_tx, log_window_tx, stat_window_tx, fight_background_tx, wooden_wall_tx, wooden_floor_tx, control_window_tx,
+	sf::String player_input;
+	sf::Sprite player_0_green, player_1_green, player_2_green, player_big_back_green, player_big_front_green, player_0_red, player_1_red, player_2_red, player_big_back_red, player_big_front_red,
+		npc, dialogue_window1, grass, sand, rock, door, background, menu_background, enemy, enemy_big, dead_enemy, HP, sword,coin, skeleton, log_window, 
+		stat_window, fight_background, wooden_wall, wooden_floor, control_window, bar, table, bush, barrel, enemy_boss,enemy_big_boss, dead_enemy_boss, 
+		window_s, quest_window, brick_wall, stat_icon, quest_icon, sword_icon, help_icon, enemy_icon;
+	sf::Texture player_0_green_tx, player_1_green_tx, player_2_green_tx, player_big_back_green_tx, player_big_front_green_tx, player_0_red_tx, 
+		player_1_red_tx, player_2_red_tx, player_big_back_red_tx, player_big_front_red_tx, npc_tx, dialogue_window_tx, grass_tx, sand_tx, rock_tx, door_tx, background_tx, menu_background_tx, enemy_tx,
+		enemy_big_tx, dead_enemy_tx, HP_tx, sword_tx, coin_tx, skeleton_tx, log_window_tx, stat_window_tx, fight_background_tx, wooden_wall_tx, wooden_floor_tx, control_window_tx,
 		bar_tx, table_tx, bush_tx, barrel_tx, enemy_boss_tx, enemy_big_boss_tx, dead_enemy_boss_tx, window_tx, quest_window_tx, brick_wall_tx, stat_icon_tx,
 		quest_icon_tx, help_icon_tx, enemy_icon_tx;
 	sf::Font font;
 	sf::Text npc_response_t, basic_npc_response_t, player_response_t, player_response_t2, money_t, player_weapon_damage_t, player_dodge_chance_t, player_hp_t, game_over_t, list_of_actions,
-		enemy_hp_t, enemy_weapon_damage_t, enemy_dodge_chance_t, enemy_type_t, player_last_action_t, enemy_last_action_t, controls_t, button_name, title, enemy_name, player_name, quest_text, quest_name;
+		enemy_hp_t, enemy_weapon_damage_t, enemy_dodge_chance_t, enemy_type_t, player_last_action_t, enemy_last_action_t, controls_t, button_name, title, enemy_name, player_name, quest_text,
+		quest_name, selection_menu_text1, name_select_text, player_text;
 	sf::View credits_view;
 
 
@@ -100,12 +104,13 @@ public:
 	void draw_enemy_boss_big(int i, int j);
 	void draw_dead_enemy_boss(int i, int j);
 	void draw_background();
-	void draw_game_over_background();
+	void draw_menu_background();
 	void draw_player_statistics(float i, float j);
 	void draw_help(float i, float j);
 	void draw_enemy_statistics(float i, float j, Enemy enemy);
 	void draw_player(int i, int j);
-	void draw_player_big(float i, float j);
+	void draw_player_big_back(float i, float j);
+	void draw_player_big_front(float i, float j);
 	void draw_dialogue();
 	void draw_dialogue_window();
 	void draw_action_window(float i, float j);
@@ -114,11 +119,15 @@ public:
 	void draw_log_window(float i, float j);
 	void draw_quest_window(float i, float j);
 	void draw_fight_background();
+	void draw_selection_menu();
+	void draw_name_select();
+	void draw_skeleton(float i, float j);
 
 	//Utylity
 	void reset();
 	void after_quest();
 	void which_button_guard();
+	void which_apperance_guard();
 	bool is_hit(int dodge_chance);
 	std::string combine_string(std::string string1, std::string string2, std::string string3);
 	unsigned** make_line(float x1, float y1, float x2, float y2);

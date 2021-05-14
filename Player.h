@@ -6,6 +6,7 @@ private:
 	int player_hit_points, weapon_damage, amount_of_money, player_dodge_chance, player_start_hit_points,
 		player_start_weapon_damage, player_start_amount_of_money;
 	bool alive = true;
+	std::string player_name;
 
 public:
 	Player(int hit_points, int weapon_damage, int amount_of_money, int player_dodge_chance);
@@ -18,5 +19,7 @@ public:
 	void set_player_amount_of_money(int amount_of_money);
 	bool is_alive();
 	void reset_player();
+	std::string get_player_name();
+	void set_player_name(std::string name);
 };
 

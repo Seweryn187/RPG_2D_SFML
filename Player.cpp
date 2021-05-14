@@ -52,3 +52,13 @@ void Player::reset_player() {
 	weapon_damage = player_start_weapon_damage;
 	alive = true;
 }
+
+std::string Player::get_player_name()
+{
+	return player_name;
+}
+
+void Player::set_player_name(std::string name)
+{
+	player_name = name;
+}
